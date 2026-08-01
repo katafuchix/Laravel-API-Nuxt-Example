@@ -1,3 +1,172 @@
+
+## 1. Laravel APIプロジェクト作成
+
+```
+composer create-project laravel/laravel todo-api
+cd todo-api
+ ```
+
+## 2. API機能を有効化(Laravel 11+では必須)
+
+```
+php artisan install:api
+```
+
+routes/api.php が有効になり、bootstrap/app.php に api: ルートが追加されます。
+
+## 3. SQLiteデータベース準備
+
+```
+touch database/database.sqlite
+```
+
+.env を編集し、DB設定をSQLiteに:
+
+```
+DB_CONNECTION=sqlite
+```
+
+(DB_DATABASE の行はコメントアウトのままでOK。Laravelが自動で database/database.sqlite を見ます)
+
+## 4. モデル・マイグレーション・コントローラ作成
+
+```
+php artisan make:model Todo -mc
+```
+
+database/migrations/xxxx_create_todos_table.php を編集:
+
+```
+public function up(): void
+{
+    Schema::create('todos', function (Blueprint $table) {
+        $table->id();
+        $table->string('title');
+        $table->boolean('done')->default(false);
+        $table->timestamps();
+    });
+}
+
+```
+
+マイグレーション実行:
+
+```
+php artisan migrate
+```
+
+## 5. モデルに fillable を追加
+
+app/Models/Todo.php:
+
+```
+class Todo extends Model
+{
+    protected $fillable = ['title', 'done'];
+}
+```
+
+## 6. コントローラにメソッド追加
+
+app/Http/Controllers/TodoController.php:
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Todo;
+use Illuminate\Http\Request;
+
+class TodoController extends Controller
+{
+    public function index()
+    {
+        return Todo::all();
+    }
+
+    public function store(Request $request)
+    {
+        return Todo::create($request->only('title'));
+    }
+}
+```
+
+## 7. APIルート定義
+
+routes/api.php:
+
+```
+<?php
+
+use App\Http\Controllers\TodoController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/todos', [TodoController::class, 'index']);
+Route::post('/todos', [TodoController::class, 'store']);
+```
+
+## 8. CORS設定
+
+```
+php artisan config:publish cors
+```
+
+config/cors.php の allowed_origins を編集:
+
+```
+'allowed_origins' => ['http://localhost:3000'],
+```
+
+## 9. サーバー起動
+
+```
+php artisan serve
+```
+
+## 10. テストデータ投入(別ターミナルで)
+
+```
+cd todo-api
+php artisan tinker
+ % php artisan tinker             
+> App\Models\Todo::create(['title' => '牛乳を買う']);
+
+= App\Models\Todo {#7874
+    title: "牛乳を買う",
+    updated_at: "2026-08-01 15:21:24",
+    created_at: "2026-08-01 15:21:24",
+    id: 1,
+  }
+
+> App\Models\Todo::create(['title' => 'レポートを書く']);
+
+= App\Models\Todo {#7427
+    title: "レポートを書く",
+    updated_at: "2026-08-01 15:21:30",
+    created_at: "2026-08-01 15:21:30",
+    id: 2,
+  }
+
+> App\Models\Todo::create(['title' => 'ジムに行く']);
+
+= App\Models\Todo {#8136
+    title: "ジムに行く",
+    updated_at: "2026-08-01 15:21:35",
+    created_at: "2026-08-01 15:21:35",
+    id: 3,
+  }
+
+exit
+```
+
+## 11. 動作確認
+
+```
+curl http://localhost:8000/api/todos
+```
+JSON配列が返ってくれば成功です。
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
