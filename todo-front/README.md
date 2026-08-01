@@ -1,3 +1,48 @@
+## 1. Nuxtプロジェクト作成
+Laravelプロジェクトと同じ階層に作成
+
+```
+npx nuxi init todo-front
+cd todo-front
+npm install
+```
+途中でパッケージマネージャーを聞かれたら npm を選んでOKです。
+
+## 2. app.vue を編集
+
+```
+cat > app.vue << 'EOF'
+<script setup>
+const { data: todos } = await useFetch('http://localhost:8000/api/todos')
+</script>
+
+<template>
+  <div>
+    <h1>Todo一覧</h1>
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">{{ todo.title }}</li>
+    </ul>
+  </div>
+</template>
+EOF
+```
+
+## 3. Nuxt起動
+
+```
+npm run dev
+```
+
+起動すると http://localhost:3000 でアクセスできるようになります(ターミナルに表示されるURLを確認してください)。
+
+## 4. ブラウザで確認
+
+http://localhost:3000 を開いて、Laravel側に入れたデータが一覧表示されればOKです。
+
+
+*** 
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
