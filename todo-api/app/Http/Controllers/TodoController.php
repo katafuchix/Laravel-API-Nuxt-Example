@@ -17,4 +17,18 @@ class TodoController extends Controller
     {
         return Todo::create($request->only('title'));
     }
+
+    public function update(Request $request, Todo $todo)
+    {
+        $todo->update($request->only('title', 'done'));
+
+        return $todo;
+    }
+
+    public function destroy(Todo $todo)
+    {
+        $todo->delete();
+
+        return response()->noContent();
+    }
 }
