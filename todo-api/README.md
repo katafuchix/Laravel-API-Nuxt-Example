@@ -1,4 +1,24 @@
+## 動作手順
 
+```
+# clone後の初期化処理
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+
+# データ投入
+php artisan tinker
+> App\Models\Todo::create(['title' => '牛乳を買う']);
+> App\Models\Todo::create(['title' => 'レポートを書く']);
+> App\Models\Todo::create(['title' => 'ジムに行く']);
+
+# 起動確認
+php artisan serve
+```
+
+## プロジェクトを作成した手順
 ## 1. Laravel APIプロジェクト作成
 
 ```
