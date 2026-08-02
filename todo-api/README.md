@@ -13,6 +13,7 @@ php artisan tinker
 > App\Models\Todo::create(['title' => '牛乳を買う']);
 > App\Models\Todo::create(['title' => 'レポートを書く']);
 > App\Models\Todo::create(['title' => 'ジムに行く']);
+exit
 
 # 起動確認
 php artisan serve
